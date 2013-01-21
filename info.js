@@ -117,16 +117,38 @@ function formatMusicName(entry) {
     return name.add(artist);
 }
 
+function formatMusicInfo(entry) {
+    var bpmlabel = 'BPM ';
+    var bpm = entry.bpm;
+    var delim = ' / ';
+    var nclabel = '노트 수 ';
+    var bscnc = '<span class="color-bsc-darken">' + entry.BASIC.note + '</span>';
+    var advnc = '<span class="color-adv-darken">' + entry.ADVANCED.note + '</span>';
+    var extnc = '<span class="color-ext-darken">' + entry.EXTREME.note + '</span>';
+    var ncdelim = '-';
+    return bpmlabel + bpm + delim + nclabel + bscnc + ncdelim + advnc + ncdelim + extnc;
+}
+
 function addRow(entry) {
     var tr = $('<tr class="entry">');
     var musicName = $('<td class="music">').html(formatMusicName(entry));
-    var bsc = $('<td class="bsc">').html(formatScore(entry.BASIC)).addClass((entry.BASIC.score==1000000)?'fc':'nfc');
-    var adv = $('<td class="adv">').html(formatScore(entry.ADVANCED)).addClass((entry.ADVANCED.score==1000000)?'fc':'nfc');
-    var ext = $('<td class="ext">').html(formatScore(entry.EXTREME)).addClass((entry.EXTREME.score==1000000)?'fc':'nfc');
+    var bsc = $('<td class="bsc">')
+        .html(formatScore(entry.BASIC))
+        .find('.level').addClass('color-bsc-darken').end()
+        .addClass((entry.BASIC.score==1000000)?'fc':'nfc');
+    var adv = $('<td class="adv">')
+        .html(formatScore(entry.ADVANCED))
+        .find('.level').addClass('color-adv-darken').end()
+        .addClass((entry.ADVANCED.score==1000000)?'fc':'nfc');
+    var ext = $('<td class="ext">')
+        .html(formatScore(entry.EXTREME))
+        .find('.level').addClass('color-ext-darken').end()
+        .addClass((entry.EXTREME.score==1000000)?'fc':'nfc');
     tr.append(musicName).append(bsc).append(adv).append(ext);
 
     var trinfo = $('<tr class="entry-info">');
-    musicName = $('<td class="music">').html('BPM ' + entry.bpm + ' / 노트 수 ' + entry.BASIC.note + '-' + entry.ADVANCED.note + '-' + entry.EXTREME.note);
+    musicName = $('<td class="music">')
+        .html(formatMusicInfo(entry));
     bsc = $('<td class="bsc">').html(entry.BASIC.time);
     adv = $('<td class="adv">').html(entry.ADVANCED.time);
     ext = $('<td class="ext">').html(entry.EXTREME.time);

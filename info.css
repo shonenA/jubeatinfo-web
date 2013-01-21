@@ -9,6 +9,25 @@
     width: 190px;
 }
 
+.color-bsc {
+    color: #87EE2C;
+}
+.color-adv {
+    color: #F7DB24;
+}
+.color-ext {
+    color: #FF7C59;
+}
+.color-bsc-darken {
+    color: #529D1C;
+}
+.color-adv-darken {
+    color: #A87F28;
+}
+.color-ext-darken {
+    color: #A73D34;
+}
+
 .music-list .entry td {
     height: 50px;
     vertical-align: middle;
@@ -18,22 +37,13 @@
 .music-list .entry-info td.bsc {
     border-left: 6px solid #87EE2C;
 }
-.music-list .entry td.bsc .level {
-    color: #87EE2C;
-}
 .music-list .entry td.adv,
 .music-list .entry-info td.adv {
     border-left: 6px solid #F7DB24;
 }
-.music-list .entry td.adv .level {
-    color: #F7DB24;
-}
 .music-list .entry td.ext,
 .music-list .entry-info td.ext {
     border-left: 6px solid #FF7C59;
-}
-.music-list .entry td.ext .level {
-    color: #FF7C59;
 }
 
 .music-list .entry-info td {
