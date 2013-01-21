@@ -1,0 +1,95 @@
+.music-list .idx .name {
+    width: 370px;
+}
+
+.music-list .idx .bsc,
+.music-list .idx .adv,
+.music-list .idx .ext
+{
+    width: 190px;
+}
+
+.music-list .entry td {
+    height: 50px;
+    vertical-align: middle;
+}
+
+.music-list .entry td.bsc,
+.music-list .entry-info td.bsc {
+    border-left: 6px solid #87EE2C;
+}
+.music-list .entry td.bsc .level {
+    color: #87EE2C;
+}
+.music-list .entry td.adv,
+.music-list .entry-info td.adv {
+    border-left: 6px solid #F7DB24;
+}
+.music-list .entry td.adv .level {
+    color: #F7DB24;
+}
+.music-list .entry td.ext,
+.music-list .entry-info td.ext {
+    border-left: 6px solid #FF7C59;
+}
+.music-list .entry td.ext .level {
+    color: #FF7C59;
+}
+
+.music-list .entry-info td {
+    height: 12px;
+    margin: 0;
+    padding: 0;
+    padding-right: 8px;
+    border-top: 1px solid #eee;
+    font-size: 10px;
+    text-align: right;
+}
+.music-list .entry-info td.music {
+    padding-left: 8px;
+    text-align: left;
+}
+
+.music-list .entry .rank {
+    padding-left: 45px;
+    line-height: 0%;
+    font-size: 40px;
+    color: #CCC;
+    font-family: Tahoma;
+}
+.music-list .entry .score {
+    line-height: 0%;
+    font-size: 25px;
+    text-align: right;
+}
+.music-list .entry .level {
+    margin-left: -3px;
+    line-height: 0%;
+    font-size: 36px;
+    text-align: center;
+    width: 40px;
+    font-family: Tahoma;
+}
+.music-list .entry .not-played-yet {
+    padding-left: 45px;
+    line-height: 0%;
+    font-size: 14px;
+    color: #999;
+    text-align: center;
+}
+
+.music-list .entry .music {
+    max-width: 340px;
+    overflow-x: hidden;
+    white-space: nowrap;
+}
+
+.music-list .entry .music .name {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.music-list .entry .music .artist {
+    font-size: 10px;
+}
+
