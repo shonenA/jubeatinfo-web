@@ -70,7 +70,7 @@
     width: 37px;
     height: 37px;
     top: 17px;
-    right: 2px;
+    right: 7px;
     text-align: center;
 }
 .music-list .entry .rank img {
@@ -83,7 +83,7 @@
     background-image: url('images/fc_icon_1.png');
 }
 .music-list .entry .score {
-    padding-right: 32px;
+    padding-right: 37px;
     line-height: 0%;
     font-size: 20px;
     text-align: right;
