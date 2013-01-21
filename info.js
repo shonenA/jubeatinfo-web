@@ -38,9 +38,25 @@ var MusicEntries = (function() {
         get: function(name) {
             return idx[escape(name)];
         },
-        forEach: function(func) {
+        filter: function(filter) {
             for( var i in idx ) {
-                func.call(this, idx[i]);
+                if( filter.call(this, idx[i]) ) {
+                    delete(idx[i]);
+                }
+            }
+        },
+        forEach: function(func, order) {
+            var sorted = [];
+            for( var i in idx ) {
+                sorted.push(idx[i]);
+            }
+
+            if( order ) {
+                sorted.sort(order);
+            }
+
+            for( var i in sorted ) {
+                func.call(this, this.get(sorted[i].name));
             }
         }
     }
@@ -54,13 +70,13 @@ function bindHandler() {
 
 function updateEntry(entry) {
     var levels = {
-        BASIC: entry[3],
-        ADVANCED: entry[4],
-        EXTREME: entry[5]
+        BASIC: parseInt(entry[3]),
+        ADVANCED: parseInt(entry[4]),
+        EXTREME: parseInt(entry[5])
     }, notes = {
-        BASIC: entry[6],
-        ADVANCED: entry[7],
-        EXTREME: entry[8]
+        BASIC: parseInt(entry[6]),
+        ADVANCED: parseInt(entry[7]),
+        EXTREME: parseInt(entry[8])
     }
     MusicEntries.setEntry(entry[0], entry[1], entry[2], levels, notes);
 }
@@ -70,7 +86,8 @@ function updateHistory(history) {
 }
 
 function addRows() {
-    MusicEntries.forEach(addRow);
+    MusicEntries.filter(function(e) { return e.BASIC.level == 0; });
+    MusicEntries.forEach(addRow, function(a, b) { return a.name > b.name ? 1 : -1; });
 }
 
 function addCommas(nStr)
