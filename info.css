@@ -4,8 +4,8 @@ body {
 
 .music-list {
     border-radius: 15px;
-    border: 1px solid #DDD;
     background: #FCFCFC;
+    box-shadow: 0px 0px 20px #AAA;
 }
 
 .music-list .idx .name {
