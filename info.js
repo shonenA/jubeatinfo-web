@@ -95,17 +95,16 @@ function formatScore(entry, rank) {
     if( 0 == rank ) {
         html += '<div class="not-played-yet">Not played yet</div>';
     } else {
-        html += '<div class="rank">';
-        if( rank < 500000 ) html += "E";
-        else if( rank < 700000 ) html += "D";
-        else if( rank < 800000 ) html += "C";
-        else if( rank < 850000 ) html += "B";
-        else if( rank < 900000 ) html += "A";
-        else if( rank < 950000 ) html += "S";
-        else if( rank < 980000 ) html += "SS";
-        else if( rank < 1000000 ) html += "SSS";
-        else html += "EXC";
-        html += '</div>';
+        if( rank < 500000 ) rank = 0;
+        else if( rank < 700000 ) rank = 1;
+        else if( rank < 800000 ) rank = 2;
+        else if( rank < 850000 ) rank = 3;
+        else if( rank < 900000 ) rank = 4;
+        else if( rank < 950000 ) rank = 5;
+        else if( rank < 980000 ) rank = 6;
+        else if( rank < 1000000 ) rank = 7;
+        else rank = 8;
+        html += '<div class="rank"><img src="images/rating_'+rank+'.gif" /></div>';
         html += '<div class="score">' + addCommas(score) + '</div>';
     }
     html += '<div class="level">' + entry.level + '</div>';
@@ -121,9 +120,9 @@ function formatMusicName(entry) {
 function addRow(entry) {
     var tr = $('<tr class="entry">');
     var musicName = $('<td class="music">').html(formatMusicName(entry));
-    var bsc = $('<td class="bsc nfc">').html(formatScore(entry.BASIC));
-    var adv = $('<td class="adv nfc">').html(formatScore(entry.ADVANCED));
-    var ext = $('<td class="ext nfc">').html(formatScore(entry.EXTREME));
+    var bsc = $('<td class="bsc">').html(formatScore(entry.BASIC)).addClass((entry.BASIC.score==1000000)?'fc':'nfc');
+    var adv = $('<td class="adv">').html(formatScore(entry.ADVANCED)).addClass((entry.ADVANCED.score==1000000)?'fc':'nfc');
+    var ext = $('<td class="ext">').html(formatScore(entry.EXTREME)).addClass((entry.EXTREME.score==1000000)?'fc':'nfc');
     tr.append(musicName).append(bsc).append(adv).append(ext);
 
     var trinfo = $('<tr class="entry-info">');

@@ -50,17 +50,34 @@
     text-align: left;
 }
 
+.music-list .entry .fc,
+.music-list .entry .nfc {
+    position: relative;
+}
+
 .music-list .entry .rank {
-    padding-left: 45px;
-    line-height: 0%;
-    font-size: 40px;
-    color: #CCC;
-    font-family: Tahoma;
+    position: absolute;
+    width: 37px;
+    height: 37px;
+    top: 17px;
+    right: 2px;
+    text-align: center;
+}
+.music-list .entry .rank img {
+    padding-top: 6px;
+}
+.music-list .entry .nfc .rank {
+    background-image: url('images/fc_icon_0.png');
+}
+.music-list .entry .fc .rank {
+    background-image: url('images/fc_icon_1.png');
 }
 .music-list .entry .score {
+    padding-right: 32px;
     line-height: 0%;
-    font-size: 25px;
+    font-size: 20px;
     text-align: right;
+    font-family: Tahoma;
 }
 .music-list .entry .level {
     margin-left: -3px;
