@@ -3,7 +3,7 @@
 <head>
 <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
 <meta charset="utf-8">
-<title>INFO</title>
+<title>Jubeat Score Viewer</title>
 <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap.min.css" rel="stylesheet">
 <link href="info.css" rel="stylesheet" type="text/css" />
 </head>
@@ -11,39 +11,48 @@
 <div class="container">
     <div class="content">
         <div class="page-header">
-            <h1>INFO <small class="user-name"></small></h1>
+            <h1>Jubeat Score Viewer <small class="user-name"></small></h1>
         </div>
     </div>
-    <table class="table music-list">
-        <thead>
-            <tr class="idx">
-                <th class="name">곡 제목</th>
-                <th class="bsc color-bsc-darken">BASIC</th>
-                <th class="adv color-adv-darken">ADVANCED</th>
-                <th class="ext color-ext-darken">EXTREME</th>
-            </tr>
-            <tr class="sorter">
-                <td class="name">
-                    <a href="#" class="name">제목</a>
-                </td>
-                <td class="bsc">
-                    <a href="#" class="level">레벨</a>
-                    <a href="#" class="score">기록</a>
-                    <a href="#" class="time">갱신일</a>
-                </td>
-                <td class="adv">
-                    <a href="#" class="level">레벨</a>
-                    <a href="#" class="score">기록</a>
-                    <a href="#" class="time">갱신일</a>
-                </td>
-                <td class="ext">
-                    <a href="#" class="level">레벨</a>
-                    <a href="#" class="score">기록</a>
-                    <a href="#" class="time">갱신일</a>
-                </td>
-            </tr>
-        </thead>
-    </table>
+
+    <div class="content content-page stats">
+        <div class="title">통계</div>
+    </div>
+
+    <div class="content content-page records">
+        <div class="title">곡별 점수</div>
+
+        <table class="table music-list">
+            <thead>
+                <tr class="idx">
+                    <th class="name">곡 제목</th>
+                    <th class="bsc color-bsc-darken">BASIC</th>
+                    <th class="adv color-adv-darken">ADVANCED</th>
+                    <th class="ext color-ext-darken">EXTREME</th>
+                </tr>
+                <tr class="sorter">
+                    <td class="name">
+                        <a href="#" class="name">제목</a>
+                    </td>
+                    <td class="bsc">
+                        <a href="#" class="level">레벨</a>
+                        <a href="#" class="score">기록</a>
+                        <a href="#" class="time">갱신일</a>
+                    </td>
+                    <td class="adv">
+                        <a href="#" class="level">레벨</a>
+                        <a href="#" class="score">기록</a>
+                        <a href="#" class="time">갱신일</a>
+                    </td>
+                    <td class="ext">
+                        <a href="#" class="level">레벨</a>
+                        <a href="#" class="score">기록</a>
+                        <a href="#" class="time">갱신일</a>
+                    </td>
+                </tr>
+            </thead>
+        </table>
+    </div>
 </div>
 
 <footer class="footer">

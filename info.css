@@ -4,10 +4,27 @@ body {
     background: url(images/main_bg.gif) repeat-x #FCFCFC
 }
 
-.music-list {
+.page-header {
+    border-bottom: 1px solid #555;
+}
+
+.content-page {
     border-radius: 15px;
-    background: #FCFCFC;
+    background: rgba(252,252,252,0.4);
     box-shadow: 0px 0px 20px #AAA;
+    min-height: 100px;
+    margin-bottom: 20px;
+}
+
+.content-page .title {
+    font-family: Dotum;
+    background: #555;
+    color: #DDD;
+    border-radius: 15px 15px 0 0;
+    height: 26px;
+    font-size: 26px;
+    padding: 10px 12px;
+    line-height: normal;
 }
 
 .music-list .idx .name {

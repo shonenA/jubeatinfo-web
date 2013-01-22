@@ -178,16 +178,17 @@ function formatScore(entry, rank) {
     if( 0 == rank ) {
         html += '<div class="not-played-yet">Not played yet</div>';
     } else {
-        if( rank < 500000 ) rank = 0;
-        else if( rank < 700000 ) rank = 1;
-        else if( rank < 800000 ) rank = 2;
-        else if( rank < 850000 ) rank = 3;
-        else if( rank < 900000 ) rank = 4;
-        else if( rank < 950000 ) rank = 5;
-        else if( rank < 980000 ) rank = 6;
-        else if( rank < 1000000 ) rank = 7;
-        else rank = 8;
-        html += '<div class="rank"><img src="images/rating_'+rank+'.gif" /></div>';
+        var rating = null;
+        if( rank < 500000 ) { rank = 0; rating = 'E'; }
+        else if( rank < 700000 ) { rank = 1; rating = 'D'; }
+        else if( rank < 800000 ) { rank = 2; rating = 'C'; }
+        else if( rank < 850000 ) { rank = 3; rating = 'B'; }
+        else if( rank < 900000 ) { rank = 4; rating = 'A'; }
+        else if( rank < 950000 ) { rank = 5; rating = 'S'; }
+        else if( rank < 980000 ) { rank = 6; rating = 'SS'; }
+        else if( rank < 1000000 ) { rank = 7; rating = 'SSS'; }
+        else { rank = 8; rating = 'EXC'; }
+        html += '<div class="rank"><img src="images/rating_'+rank+'.gif" data="'+rating+'" /></div>';
         html += '<div class="score">' + addCommas(score) + '</div>';
     }
     html += '<div class="level">' + entry.level + '</div>';
@@ -237,15 +238,23 @@ function addRow(entry) {
     ext = $('<td class="ext">').html(entry.EXTREME.time.split(' ')[0]);
     trinfo.append(musicName).append(bsc).append(adv).append(ext);
 
-    $('.table').append(tr).append(trinfo);
+    $('.records .table').append(tr).append(trinfo);
 }
 
 function clearRows() {
-    $('.table tbody tr').remove();
+    $('.records .table tbody tr').remove();
 }
 
 function getData() {
-    getMusicData(getUserData);
+    // chain methods
+    var methods = [getMusicData, getUserData, getStat];
+    (function chain(methods) {
+        if( methods.length == 0 ) return;
+        var method = methods.shift();
+        method.call(this, function() {
+            chain(methods);
+        });
+    })(methods);
 }
 
 var rivalID = 57710029431862;
@@ -269,7 +278,7 @@ function getMusicData(callback) {
 }
 
 function getUserData(callback) {
-    $.get('data/'+rivalID+'.js', function(data) {
+    $.get('data/'+rivalID+'.js', {r: Math.random()}, function(data) {
         $('.user-name').text(data.user_name);
         clearRows();
         for( var i in data.history ) {
@@ -284,6 +293,58 @@ function getUserData(callback) {
 
 function readHash() {
     if( location.hash ) rivalID = location.hash.substr(1);
+}
+
+function getStat(callback) {
+    $('.content-page.stats table').remove();
+
+    var data = {};
+
+    $('.fc,.nfc').each(function() {
+        var lv = $(this).find('.level').text();
+        var rating = $(this).find('img').attr('data');
+        if( 'undefined' == typeof rating ) rating = 'NP';
+        if( 'undefined' == typeof data[lv] ) data[lv] = {};
+        if( 'undefined' == typeof data[lv][rating] ) data[lv][rating] = 0;
+        data[lv][rating]++;
+    });
+
+    var tbl = $('<table class="table">');
+    var head = $('<tr>')
+        .append($('<th>').text('레벨'))
+        .append($('<th>').text('EXC'))
+        .append($('<th>').text('SSS'))
+        .append($('<th>').text('SS'))
+        .append($('<th>').text('S'))
+        .append($('<th>').text('A'))
+        .append($('<th>').text('B'))
+        .append($('<th>').text('C'))
+        .append($('<th>').text('D'))
+        .append($('<th>').text('E'))
+        .append($('<th>').text('NP'));
+    tbl.append(head);
+
+    for( var i in data ) {
+        var tr = $('<tr>');
+        tr.append($('<td>').text('Level ' + i));
+        tr.append($('<td>').text(data[i]['EXC']));
+        tr.append($('<td>').text(data[i]['SSS']));
+        tr.append($('<td>').text(data[i]['SS']));
+        tr.append($('<td>').text(data[i]['S']));
+        tr.append($('<td>').text(data[i]['A']));
+        tr.append($('<td>').text(data[i]['B']));
+        tr.append($('<td>').text(data[i]['C']));
+        tr.append($('<td>').text(data[i]['D']));
+        tr.append($('<td>').text(data[i]['E']));
+        tr.append($('<td>').text(data[i]['NP']));
+        tbl.append(tr);
+    }
+
+    $('.content-page.stats').append(tbl);
+
+    if( callback ) {
+        callback.call(this);
+    }
 }
 
 function initialize() {
