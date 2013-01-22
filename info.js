@@ -248,6 +248,8 @@ function getData() {
     getMusicData(getUserData);
 }
 
+var rivalID = 57710029431862;
+
 function getMusicData(callback) {
     $.get('data/list.txt', function(data) {
         var rows = data.split('\n');
@@ -267,7 +269,7 @@ function getMusicData(callback) {
 }
 
 function getUserData(callback) {
-    $.get('data/57710029431862.js', function(data) {
+    $.get('data/'+rivalID+'.js', function(data) {
         $('.user-name').text(data.user_name);
         clearRows();
         for( var i in data.history ) {
@@ -280,8 +282,13 @@ function getUserData(callback) {
     }, 'json');
 }
 
+function readHash() {
+    if( location.hash ) rivalID = location.hash.substr(1);
+}
+
 function initialize() {
     bindHandler();
+    readHash();
     getData();
 }
 
