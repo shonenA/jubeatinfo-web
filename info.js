@@ -29,7 +29,7 @@ var MusicEntries = (function() {
             if( 'undefined' == typeof(idx[key]) ) {
                 idx[key] = new MusicEntry(name);
             }
-            score = score.trim();
+            score = parseInt(score.trim());
             if( idx[key][difficulty].score < score ) {
                 idx[key][difficulty].score = score;
                 idx[key][difficulty].time = time;
@@ -62,10 +62,76 @@ var MusicEntries = (function() {
     }
 })();
 
+var Sorter = (function() {
+    var methods = [
+        {domain:'name', method:'name', obj:['name']},
+        {domain:'bsc', method:'level', obj:['BASIC', 'level']},
+        {domain:'bsc', method:'score', obj:['BASIC', 'score'], desc: true},
+        {domain:'bsc', method:'time', obj:['BASIC', 'time'], desc: true},
+        {domain:'adv', method:'level', obj:['ADVANCED', 'level']},
+        {domain:'adv', method:'score', obj:['ADVANCED', 'score'], desc: true},
+        {domain:'adv', method:'time', obj:['ADVANCED', 'time'], desc: true},
+        {domain:'ext', method:'level', obj:['EXTREME', 'level']},
+        {domain:'ext', method:'score', obj:['EXTREME', 'score'], desc: true},
+        {domain:'ext', method:'time', obj:['EXTREME', 'time'], desc: true}
+    ];
+
+    var current = null;
+    var asc = true;
+
+    var select = function(m) {
+        if( current == m ) {
+            if( asc = !asc ) $('.sorter .on').removeClass('desc').addClass('asc');
+            else $('.sorter .on').removeClass('asc').addClass('desc');
+            return;
+        }
+        current = m;
+        $('.sorter .on').removeClass('on').removeClass('desc').removeClass('asc');
+        $('.' + m.domain + ' .' + m.method).addClass('on').addClass('asc');
+        if( asc = !m.desc ) $('.sorter .on').removeClass('desc').addClass('asc');
+        else $('.sorter .on').removeClass('asc').addClass('desc');
+    }
+    select(methods[0]);
+
+    var self = {
+        bind: function() {
+            for( var i in methods ) {
+                var method = methods[i];
+                $('.' + method.domain + ' .' + method.method)
+                    .click((function(self, method) {
+                        return function(event) {
+                            event.preventDefault();
+                            self.select(method);
+                        }
+                    })(self, method));
+            }
+        },
+        select: function(method) {
+            select(method);
+            clearRows();
+            addRows();
+        },
+        getMethod: function() {
+            return function(a, b) {
+                var da = a, db = b;
+                for( var i in current.obj ) {
+                    da = da[current.obj[i]];
+                    db = db[current.obj[i]];
+                }
+                return (da < db ? -1 : 1) * (asc?1:-1);
+            }
+        }
+    }
+
+    return self;
+})();
+
 function bindHandler() {
     $('.search-query').click(function(event) {
         event.preventDefault();
     });
+
+    Sorter.bind();
 }
 
 function updateEntry(entry) {
@@ -87,7 +153,7 @@ function updateHistory(history) {
 
 function addRows() {
     MusicEntries.filter(function(e) { return e.BASIC.level == 0; });
-    MusicEntries.forEach(addRow, function(a, b) { return a.name > b.name ? 1 : -1; });
+    MusicEntries.forEach(addRow, Sorter.getMethod());
 }
 
 function addCommas(nStr)
@@ -166,9 +232,9 @@ function addRow(entry) {
     var trinfo = $('<tr class="entry-info">');
     musicName = $('<td class="music">')
         .html(formatMusicInfo(entry));
-    bsc = $('<td class="bsc">').html(entry.BASIC.time);
-    adv = $('<td class="adv">').html(entry.ADVANCED.time);
-    ext = $('<td class="ext">').html(entry.EXTREME.time);
+    bsc = $('<td class="bsc">').html(entry.BASIC.time.split(' ')[0]);
+    adv = $('<td class="adv">').html(entry.ADVANCED.time.split(' ')[0]);
+    ext = $('<td class="ext">').html(entry.EXTREME.time.split(' ')[0]);
     trinfo.append(musicName).append(bsc).append(adv).append(ext);
 
     $('.table').append(tr).append(trinfo);
@@ -177,7 +243,6 @@ function addRow(entry) {
 function clearRows() {
     $('.table tbody tr').remove();
 }
-
 
 function getData() {
     getMusicData(getUserData);
@@ -202,7 +267,7 @@ function getMusicData(callback) {
 }
 
 function getUserData(callback) {
-    $.get('data/page.js', function(data) {
+    $.get('data/57710029431862.js', function(data) {
         $('.user-name').text(data.user_name);
         clearRows();
         for( var i in data.history ) {

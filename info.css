@@ -1,3 +1,5 @@
+@charset "utf-8";
+
 body {
     background: url(images/main_bg.gif) repeat-x #FCFCFC
 }
@@ -17,6 +19,24 @@ body {
 .music-list .idx .ext
 {
     width: 190px;
+}
+
+.music-list .sorter td {
+    font-size: 12px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.music-list .sorter .on {
+    padding: 2px;
+    border: 1px solid;
+    border-radius: 3px;
+}
+.music-list .sorter .asc:after {
+    content: ' ▲';
+}
+.music-list .sorter .desc:after {
+    content: ' ▼';
 }
 
 .color-bsc {
@@ -39,7 +59,7 @@ body {
 }
 
 .music-list .entry td {
-    height: 50px;
+    height: 40px;
     vertical-align: middle;
 }
 
@@ -75,11 +95,17 @@ body {
     position: relative;
 }
 
+.music-list .entry .fc:hover,
+.music-list .entry .nfc:hover {
+    border-bottom: 1px solid #ff7c59;
+    cursor: pointer;
+}
+
 .music-list .entry .rank {
     position: absolute;
     width: 37px;
     height: 37px;
-    top: 17px;
+    top: 12px;
     right: 7px;
     text-align: center;
 }
@@ -127,7 +153,7 @@ body {
 }
 
 .music-list .entry .music .artist {
-    font-size: 10px;
+    font-size: 13px;
 }
 
 .footer {
