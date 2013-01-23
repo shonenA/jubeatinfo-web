@@ -304,9 +304,13 @@ function getStat(callback) {
         var lv = $(this).find('.level').text();
         var rating = $(this).find('img').attr('data');
         if( 'undefined' == typeof rating ) rating = 'NP';
-        if( 'undefined' == typeof data[lv] ) data[lv] = {};
+        if( 'undefined' == typeof data[lv] ) data[lv] = {scoresum:0,count:0};
         if( 'undefined' == typeof data[lv][rating] ) data[lv][rating] = 0;
         data[lv][rating]++;
+        
+        var score = parseInt($(this).find('.score').text().replace(/,/g, ''));
+        data[lv].scoresum += isNaN(score)?0:score;
+        if( !isNaN(score) ) data[lv].count++;
     });
 
     var tbl = $('<table class="table">');
@@ -321,12 +325,13 @@ function getStat(callback) {
         .append($('<th>').text('C'))
         .append($('<th>').text('D'))
         .append($('<th>').text('E'))
-        .append($('<th>').text('NP'));
+        .append($('<th>').text('NP'))
+        .append($('<th>').text('평균'));
     tbl.append(head);
 
     for( var i in data ) {
         var tr = $('<tr>');
-        tr.append($('<td>').text('Level ' + i));
+        tr.append($('<th>').text('Level ' + i));
         tr.append($('<td>').text(data[i]['EXC']));
         tr.append($('<td>').text(data[i]['SSS']));
         tr.append($('<td>').text(data[i]['SS']));
@@ -337,6 +342,7 @@ function getStat(callback) {
         tr.append($('<td>').text(data[i]['D']));
         tr.append($('<td>').text(data[i]['E']));
         tr.append($('<td>').text(data[i]['NP']));
+        tr.append($('<td>').text(parseInt(data[i]['scoresum']/(data[i]['count']?data[i]['count']:1))));
         tbl.append(tr);
     }
 
