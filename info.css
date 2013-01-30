@@ -167,10 +167,12 @@ body {
 .music-list .entry .music .name {
     font-size: 18px;
     font-weight: bold;
+    max-width: inherit;
 }
 
 .music-list .entry .music .artist {
     font-size: 13px;
+    max-width: inherit;
 }
 
 .footer {
