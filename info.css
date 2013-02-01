@@ -8,6 +8,12 @@ body {
     border-bottom: 1px solid #555;
 }
 
+.page-header button,
+.page-header input
+{
+    vertical-align: middle;
+}
+
 .content-page {
     border-radius: 15px;
     background: rgba(252,252,252,0.4);

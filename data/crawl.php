@@ -28,5 +28,5 @@ for($i = 2; $i <= $totalpage; $i++) {
 
 $j->history = $history;
 
-file_put_contents("$userid.js", json_encode($j));
+file_put_contents(dirname(__FILE__) . "/$userid.js", json_encode($j));
 

@@ -131,6 +131,17 @@ function bindHandler() {
         event.preventDefault();
     });
 
+    $('button[name=button-refresh]').click(function(event) {
+        $.post('refresh.php', {random: Math.random(), rival_id: rivalID}, function(data) {
+            if( data < 0 ) {
+                alert(data);
+                return;
+            }
+            alert("Success " + data);
+            getData();
+        }, 'text');
+    });
+
     Sorter.bind();
 }
 
