@@ -3,9 +3,10 @@ var MusicEntry = function(name, artist) {
         name: name,
         artist: artist,
         bpm: 0,
-        BASIC: {score:0, time:'', level:0, note:0},
-        ADVANCED: {score:0, time:'', level:0, note:0},
-        EXTREME: {score:0, time:'', level:0, note:0}
+        image: '',
+        BASIC: {score:0, time:'', level:0, note:0, fc:0},
+        ADVANCED: {score:0, time:'', level:0, note:0, fc:0},
+        EXTREME: {score:0, time:'', level:0, note:0, fc:0}
     }
 }
 
@@ -13,18 +14,19 @@ var MusicEntries = (function() {
     var idx = {};
 
     return {
-        setEntry: function(name, artist, bpm, levels, notes) {
+        setEntry: function(name, artist, bpm, levels, notes, image) {
             var key = escape(name);
             if( 'undefined' == typeof(idx[key]) ) {
                 idx[key] = new MusicEntry(name, artist);
             }
             idx[key].bpm = bpm;
+            idx[key].image = image;
             for( var d in levels ) {
                 idx[key][d].level = levels[d];
                 idx[key][d].note = notes[d];
             }
         },
-        setHistory: function(name, difficulty, score, time) {
+        setHistory: function(name, difficulty, score, time, fc) {
             var key = escape(name);
             if( 'undefined' == typeof(idx[key]) ) {
                 idx[key] = new MusicEntry(name);
@@ -32,6 +34,7 @@ var MusicEntries = (function() {
             score = parseInt(score.trim());
             if( idx[key][difficulty].score < score ) {
                 idx[key][difficulty].score = score;
+                idx[key][difficulty].fc = fc;
                 idx[key][difficulty].time = time;
             }
         },
@@ -87,7 +90,7 @@ var Sorter = (function() {
         }
         current = m;
         $('.sorter .on').removeClass('on').removeClass('desc').removeClass('asc');
-        $('.' + m.domain + ' .' + m.method).addClass('on').addClass('asc');
+        $('.' + m.domain + ' .sort-' + m.method).addClass('on').addClass('asc');
         if( asc = !m.desc ) $('.sorter .on').removeClass('desc').addClass('asc');
         else $('.sorter .on').removeClass('asc').addClass('desc');
     }
@@ -97,7 +100,7 @@ var Sorter = (function() {
         bind: function() {
             for( var i in methods ) {
                 var method = methods[i];
-                $('.' + method.domain + ' .' + method.method)
+                $('.' + method.domain + ' .sort-' + method.method)
                     .click((function(self, method) {
                         return function(event) {
                             event.preventDefault();
@@ -110,6 +113,7 @@ var Sorter = (function() {
             select(method);
             clearRows();
             addRows();
+            addTotalRows();
         },
         getMethod: function() {
             return function(a, b) {
@@ -118,7 +122,7 @@ var Sorter = (function() {
                     da = da[current.obj[i]];
                     db = db[current.obj[i]];
                 }
-                return (da < db ? -1 : 1) * (asc?1:-1);
+                return (da < db ? -1 : 1) * (asc ? 1 : -1);
             }
         }
     }
@@ -137,7 +141,6 @@ function bindHandler() {
                 alert(data);
                 return;
             }
-            alert("Success " + data);
             getData();
         }, 'text');
     });
@@ -155,11 +158,11 @@ function updateEntry(entry) {
         ADVANCED: parseInt(entry[7]),
         EXTREME: parseInt(entry[8])
     }
-    MusicEntries.setEntry(entry[0], entry[1], entry[2], levels, notes);
+    MusicEntries.setEntry(entry[0], entry[1], entry[2], levels, notes, entry[9]);
 }
 
 function updateHistory(history) {
-    MusicEntries.setHistory(history.music, history.difficulty, history.score, history.date);
+    MusicEntries.setHistory(history.music, history.difficulty, history.score, history.date, history.fc);
 }
 
 function addRows() {
@@ -206,22 +209,32 @@ function formatScore(entry, rank) {
     return html;
 }
 
+function getImage(url) {
+    if( !$('.cache').length ) $('<div class="cache">').appendTo('body').css({weight:0,height:0});
+    var data = $('.cache').data(url);
+    if( !data ) {
+        data = $('<img>').attr('src', url).appendTo('.cache');
+        $('.cache').data(url, data);
+    }
+
+    return data.clone();
+}
+
 function formatMusicName(entry) {
+    var image = $('<div class="image">').append($('<img>').attr('src', entry.image));
     var name = $('<div class="name">').text(entry.name);
     var artist = $('<div class="artist">').text(entry.artist);
-    return name.add(artist);
+    return image.add(name).add(artist);
 }
 
 function formatMusicInfo(entry) {
-    var bpmlabel = 'BPM ';
-    var bpm = entry.bpm;
-    var delim = ' / ';
-    var nclabel = '노트 수 ';
-    var bscnc = '<span class="color-bsc-darken">' + entry.BASIC.note + '</span>';
-    var advnc = '<span class="color-adv-darken">' + entry.ADVANCED.note + '</span>';
-    var extnc = '<span class="color-ext-darken">' + entry.EXTREME.note + '</span>';
-    var ncdelim = '-';
-    return bpmlabel + bpm + delim + nclabel + bscnc + ncdelim + advnc + ncdelim + extnc;
+    var bpmlabel = '<span class="label-bpm">BPM</span>';
+    var bpm = '<span class="value-bpm">' + entry.bpm + '</span>';
+    var nclabel = '<span class="label-note">노트 수</span>';
+    var bscnc = '<span class="value-note color-bsc-darken first">' + entry.BASIC.note + '</span>';
+    var advnc = '<span class="value-note color-adv-darken">' + entry.ADVANCED.note + '</span>';
+    var extnc = '<span class="value-note color-ext-darken">' + entry.EXTREME.note + '</span>';
+    return bpmlabel + bpm + nclabel + bscnc + advnc + extnc;
 }
 
 function addRow(entry) {
@@ -230,15 +243,15 @@ function addRow(entry) {
     var bsc = $('<td class="bsc">')
         .html(formatScore(entry.BASIC))
         .find('.level').addClass('color-bsc-darken').end()
-        .addClass((entry.BASIC.score==1000000)?'fc':'nfc');
+        .addClass((entry.BASIC.fc)?'fc':'nfc');
     var adv = $('<td class="adv">')
         .html(formatScore(entry.ADVANCED))
         .find('.level').addClass('color-adv-darken').end()
-        .addClass((entry.ADVANCED.score==1000000)?'fc':'nfc');
+        .addClass((entry.ADVANCED.fc)?'fc':'nfc');
     var ext = $('<td class="ext">')
         .html(formatScore(entry.EXTREME))
         .find('.level').addClass('color-ext-darken').end()
-        .addClass((entry.EXTREME.score==1000000)?'fc':'nfc');
+        .addClass((entry.EXTREME.fc)?'fc':'nfc');
     tr.append(musicName).append(bsc).append(adv).append(ext);
 
     var trinfo = $('<tr class="entry-info">');
@@ -247,6 +260,51 @@ function addRow(entry) {
     bsc = $('<td class="bsc">').html(entry.BASIC.time.split(' ')[0]);
     adv = $('<td class="adv">').html(entry.ADVANCED.time.split(' ')[0]);
     ext = $('<td class="ext">').html(entry.EXTREME.time.split(' ')[0]);
+    trinfo.append(musicName).append(bsc).append(adv).append(ext);
+
+    $('.records .table').append(tr).append(trinfo);
+}
+
+function addTotalRows() {
+    var entry = {
+        BASIC: {
+            score: parseInt($('.bsc .score').get().map(function(e){return parseInt($(e).text().replace(/,/g, ''))}).reduce(function(a,b){return a+b}) / $('.bsc .score').length),
+            date: $('.entry-info .bsc').get().map(function(e){return $(e).text()}).sort(function(a,b){return a>b?-1:1})[0],
+            level: 'BSC',
+        },
+        ADVANCED: {
+            score: parseInt($('.adv .score').get().map(function(e) { return parseInt($(e).text().replace(/,/g, ''))}).reduce(function(a,b){return a+b}) / $('.adv .score').length),
+            date: $('.entry-info .adv').get().map(function(e){return $(e).text()}).sort(function(a,b){return a>b?-1:1})[0],
+            level: 'ADV',
+        },
+        EXTREME: {
+            score: parseInt($('.ext .score').get().map(function(e) { return parseInt($(e).text().replace(/,/g, ''))}).reduce(function(a,b){return a+b}) / $('.ext .score').length),
+            date: $('.entry-info .ext').get().map(function(e){return $(e).text()}).sort(function(a,b){return a>b?-1:1})[0],
+            level: 'EXT',
+        }
+    };
+
+    var tr = $('<tr class="entry total">');
+    var musicName = $('<td class="desc">').html('평균');
+    var bsc = $('<td class="bsc">')
+        .html(formatScore(entry.BASIC))
+        .find('.level').addClass('color-bsc-darken').end()
+        .addClass((entry.BASIC.fc)?'fc':'nfc');
+    var adv = $('<td class="adv">')
+        .html(formatScore(entry.ADVANCED))
+        .find('.level').addClass('color-adv-darken').end()
+        .addClass((entry.ADVANCED.fc)?'fc':'nfc');
+    var ext = $('<td class="ext">')
+        .html(formatScore(entry.EXTREME))
+        .find('.level').addClass('color-ext-darken').end()
+        .addClass((entry.EXTREME.fc)?'fc':'nfc');
+    tr.append(musicName).append(bsc).append(adv).append(ext);
+
+    var trinfo = $('<tr class="entry-info total">');
+    musicName = $('<td class="music">').html('');
+    bsc = $('<td class="bsc">').html(entry.BASIC.date);
+    adv = $('<td class="adv">').html(entry.ADVANCED.date);
+    ext = $('<td class="ext">').html(entry.EXTREME.date);
     trinfo.append(musicName).append(bsc).append(adv).append(ext);
 
     $('.records .table').append(tr).append(trinfo);
@@ -268,7 +326,8 @@ function getData() {
     })(methods);
 }
 
-var rivalID = 57710029431862;
+//var rivalID = 57710029431862;
+var rivalID = 57710029748673;
 
 function getMusicData(callback) {
     $.get('data/list.txt', function(data) {
@@ -288,14 +347,60 @@ function getMusicData(callback) {
     }, 'text');
 }
 
+function convertFullwidthToHalfwidth(str) {
+    var ret = '';
+    for( var i=0; i < str.length; i++ ) {
+        var code = str.charCodeAt(i);
+        if( code == 0x3000 ) {
+            ret += ' ';
+        } else if( code >= 0xff00 && code < 0xff5f ) {
+            ret += String.fromCharCode(code - 0xff00 + 0x20);
+        } else {
+            ret += str[i];
+        }
+    }
+    return ret;
+}
+
+function setBasicInformation(data) {
+    var jubilityTbl = [
+        'stone', 'soap bubble', 'pencil', 'macaron', 'lotus', 'beetle',
+        'jellyfish', 'hummingbird', 'kaleidoscope', 'prism', 'prism'
+    ];
+
+    $('.subinfo-title').text(data.title);
+    $('.subinfo-name').text(data.user_name);
+
+    $('.subinfo-jubility').text(data.jubility).attr('description', jubilityTbl[parseInt(data.jubility)]);
+    $('.subinfo-jubilityimage').append($('<img>').attr('src', data.jubility_image));
+
+    $('.subinfo-rivalid').text(data.rival_id).attr('description', '라이벌 아이디');
+    $('.subinfo-activegroup').text(data.active_group).attr('description', '소속 그룹');
+
+    $('.subinfo-marker').append($('<img>').attr('src', data.marker));
+    $('.subinfo-background').append($('<img>').attr('src', data.background));
+
+    $('.subinfo-score').text(addCommas(data.tbs_score));
+    $('.subinfo-ranking').text(addCommas(data.tbs_ranking));
+
+    $('.subinfo-time').text(data.lastplaytime).attr('description', '최근 플레이 일');
+    $('.subinfo-place').text(convertFullwidthToHalfwidth(data.lastplayplace)).attr('description', '최근 플레이 장소');
+
+    $('.subinfo-play').text(addCommas(data.count_play)).attr('description', '플레이 횟수');
+    $('.subinfo-fullcombo').text(addCommas(data.count_fullcombo)).attr('description', '풀콤보 횟수');
+    $('.subinfo-excellent').text(addCommas(data.count_excellent)).attr('description', '엑설런트 횟수');
+}
+
 function getUserData(callback) {
-    $.get('data/'+rivalID+'.js', {r: Math.random()}, function(data) {
-        $('.user-name').text(data.user_name);
+    $.get('data/'+rivalID+'.json', {r: Math.random()}, function(data) {
+        setBasicInformation(data);
+
         clearRows();
         for( var i in data.history ) {
             updateHistory(data.history[i]);
         }
         addRows();
+        addTotalRows();
         if( callback ) {
             callback.call(this);
         }
@@ -310,6 +415,7 @@ function getStat(callback) {
     $('.content-page.stats table').remove();
 
     var data = {};
+    var total = {scoresum:0,count:0};
 
     $('.fc,.nfc').each(function() {
         var lv = $(this).find('.level').text();
@@ -317,11 +423,14 @@ function getStat(callback) {
         if( 'undefined' == typeof rating ) rating = 'NP';
         if( 'undefined' == typeof data[lv] ) data[lv] = {scoresum:0,count:0};
         if( 'undefined' == typeof data[lv][rating] ) data[lv][rating] = 0;
+        if( 'undefined' == typeof total[rating] ) total[rating] = 0;
         data[lv][rating]++;
+        total[rating]++;
         
         var score = parseInt($(this).find('.score').text().replace(/,/g, ''));
         data[lv].scoresum += isNaN(score)?0:score;
-        if( !isNaN(score) ) data[lv].count++;
+        total.scoresum += isNaN(score)?0:score;
+        if( !isNaN(score) ) { data[lv].count++; total.count++; }
     });
 
     var tbl = $('<table class="table">');
@@ -341,6 +450,7 @@ function getStat(callback) {
     tbl.append(head);
 
     for( var i in data ) {
+        if( parseInt(i) != i ) continue;
         var tr = $('<tr>');
         tr.append($('<th>').text('Level ' + i));
         tr.append($('<td>').text(data[i]['EXC']));
@@ -353,9 +463,25 @@ function getStat(callback) {
         tr.append($('<td>').text(data[i]['D']));
         tr.append($('<td>').text(data[i]['E']));
         tr.append($('<td>').text(data[i]['NP']));
-        tr.append($('<td>').text(parseInt(data[i]['scoresum']/(data[i]['count']?data[i]['count']:1))));
+        tr.append($('<td>').text(addCommas(parseInt(data[i]['scoresum']/(data[i]['count']?data[i]['count']:1)))));
         tbl.append(tr);
     }
+
+    var tr = $('<tr>');
+    tr.append($('<th>').text('계'));
+    tr.append($('<td>').text(total['EXC']));
+    tr.append($('<td>').text(total['SSS']));
+    tr.append($('<td>').text(total['SS']));
+    tr.append($('<td>').text(total['S']));
+    tr.append($('<td>').text(total['A']));
+    tr.append($('<td>').text(total['B']));
+    tr.append($('<td>').text(total['C']));
+    tr.append($('<td>').text(total['D']));
+    tr.append($('<td>').text(total['E']));
+    tr.append($('<td>').text(total['NP']));
+    tr.append($('<td>').text(addCommas(parseInt(total['scoresum']/(total['count']?total['count']:1)))));
+    tbl.append(tr);
+
 
     $('.content-page.stats').append(tbl);
 

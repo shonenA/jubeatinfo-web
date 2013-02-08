@@ -1,5 +1,11 @@
 @charset "utf-8";
 
+@import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
+
+* {
+    font-family: 'Nanum Gothic';
+}
+
 body {
     background: url(images/main_bg.gif) repeat-x fixed #FCFCFC
 }
@@ -20,18 +26,85 @@ body {
     box-shadow: 0px 0px 20px #AAA;
     min-height: 100px;
     margin-bottom: 20px;
+    padding-bottom: 8px;
 }
 
 .content-page .title {
-    font-family: Dotum;
-    background: #555;
-    color: #DDD;
+    background: #ffe5e5; /* Old browsers */
+    background: -moz-linear-gradient(left, #ffe5e5 0%, #fbffe5 33%, #ffffff 66%, #e5f4ff 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%,#ffe5e5), color-stop(33%,#fbffe5), color-stop(66%,#ffffff), color-stop(100%,#e5f4ff)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(left, #ffe5e5 0%,#fbffe5 33%,#ffffff 66%,#e5f4ff 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(left, #ffe5e5 0%,#fbffe5 33%,#ffffff 66%,#e5f4ff 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(left, #ffe5e5 0%,#fbffe5 33%,#ffffff 66%,#e5f4ff 100%); /* IE10+ */
+    background: linear-gradient(to right, #ffe5e5 0%,#fbffe5 33%,#ffffff 66%,#e5f4ff 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffe5e5', endColorstr='#e5f4ff',GradientType=1 ); /* IE6-9 */
+
+    color: #666;
     border-radius: 15px 15px 0 0;
     height: 26px;
-    font-size: 26px;
-    padding: 10px 12px;
+    font-size: 20px;
+    padding: 10px 15px;
     line-height: normal;
 }
+
+.basicinfo .title {
+    margin-bottom: 5px;
+}
+
+.basicinfo .info {
+    margin-bottom: 5px;
+}
+
+.basicinfo .add-desc:before {
+    margin-right: 10px;
+    font-weight: bold;
+    content: attr(description);
+}
+
+.basicinfo .subinfo-name {
+    font-size: 50px;
+    line-height: 100%;
+    border-bottom: 1px solid #AAA;
+    margin-bottom: 10px;
+    margin-right: 10px;
+}
+
+.basicinfo .info.jubility {
+    position: relative;
+}
+.basicinfo .subinfo-jubilityimage {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.basicinfo .subinfo-jubility {
+    padding-right: 10px;
+    text-align: right;
+}
+
+.basicinfo .info.setting {
+    display: none;
+}
+
+.basicinfo .info.tbs {
+    display: none;
+}
+
+.basicinfo .subinfo-play:after,
+.basicinfo .subinfo-fullcombo:after,
+.basicinfo .subinfo-excellent:after
+{
+    margin-left: 5px;
+    content: '회';
+}
+
+
+.stats table {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 
 .music-list .idx .name {
     width: 370px;
@@ -112,6 +185,21 @@ body {
     padding-left: 8px;
     text-align: left;
 }
+.music-list .entry-info .label-bpm,
+.music-list .entry-info .label-note { 
+    margin-right: 3px;
+}
+.music-list .entry-info .label-note:before { 
+    content: '/';
+    margin: 0 5px;
+}
+.music-list .entry-info .value-note:before { 
+    content: '-';
+    color: #333;
+}
+.music-list .entry-info .value-note.first:before { 
+    content: '';
+}
 
 .music-list .entry .fc,
 .music-list .entry .nfc {
@@ -170,6 +258,13 @@ body {
     white-space: nowrap;
 }
 
+.music-list .entry .music .image {
+    width: 40px;
+    height: 40px;
+    float: left;
+    margin-right: 5px;
+}
+
 .music-list .entry .music .name {
     font-size: 18px;
     font-weight: bold;
@@ -179,6 +274,25 @@ body {
 .music-list .entry .music .artist {
     font-size: 13px;
     max-width: inherit;
+}
+
+.music-list .entry.total .desc {
+    font-size: 40px;
+}
+.music-list .entry.total .level {
+    font-size: 26px;
+}
+.music-list .entry.total .bsc,
+.music-list .entry-info.total .bsc {
+    border-left-color: #529D1C;
+}
+.music-list .entry.total .adv,
+.music-list .entry-info.total .adv {
+    border-left-color: #A87F28;
+}
+.music-list .entry.total .ext,
+.music-list .entry-info.total .ext {
+    border-left-color: #A73D34;
 }
 
 .footer {
