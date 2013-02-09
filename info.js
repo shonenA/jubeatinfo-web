@@ -395,6 +395,11 @@ function setBasicInformation(data) {
     $('.subinfo-fullcombo').text(addCommas(data.count_fullcombo)).attr('description', '풀콤보 횟수');
     $('.subinfo-excellent').text(addCommas(data.count_excellent)).attr('description', '엑설런트 횟수');
 
+    $('<a>').text('e-AMUSEMENT GATE로')
+            .attr('href', 'http://p.eagate.573.jp/game/jubeat/saucer/p/playdata/index_other.html?rival_id=' + data.rival_id)
+            .attr('target', '_eamusementgate')
+            .css('margin-left', '5px')
+            .appendTo('.basicinfo .info-right');
 }
 
 function getUserData(callback) {
