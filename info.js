@@ -1,3 +1,5 @@
+var username = 'shonen.a';
+
 var MusicEntry = function(name, artist) {
     return {
         name: name,
@@ -136,13 +138,19 @@ function bindHandler() {
     });
 
     $('button[name=button-refresh]').click(function(event) {
-        $.post('refresh.php', {random: Math.random(), rival_id: rivalID}, function(data) {
-            if( data < 0 ) {
-                alert(data);
-                return;
-            }
-            getData();
-        }, 'text');
+        $.ajax({
+            type: 'PUT',
+            url: 'api.php',
+            data: {random: Math.random(), name: username},
+            success: function(data) {
+                if( !data ) {
+                    alert('갱신 요청 실패');
+                    return;
+                }
+                alert('갱신 요청이 되었습니다');
+            },
+            dataType: 'text'
+        });
     });
 
     Sorter.bind();
@@ -326,9 +334,6 @@ function getData() {
     })(methods);
 }
 
-//var rivalID = 57710029431862;
-var rivalID = 57710029748673;
-
 function getMusicData(callback) {
     $.get('data/list.txt', function(data) {
         var rows = data.split('\n');
@@ -389,11 +394,20 @@ function setBasicInformation(data) {
     $('.subinfo-play').text(addCommas(data.count_play)).attr('description', '플레이 횟수');
     $('.subinfo-fullcombo').text(addCommas(data.count_fullcombo)).attr('description', '풀콤보 횟수');
     $('.subinfo-excellent').text(addCommas(data.count_excellent)).attr('description', '엑설런트 횟수');
+
 }
 
 function getUserData(callback) {
-    $.get('data/'+rivalID+'.json', {r: Math.random()}, function(data) {
+    $.get('api.php', {name: username, r: Math.random()}, function(res) {
+        if( !res.result ) {
+            alert(res.error);
+            return;
+        }
+
+        var data = res.data;
+
         setBasicInformation(data);
+        $('.basicinfo').slideDown();
 
         clearRows();
         for( var i in data.history ) {
@@ -401,6 +415,8 @@ function getUserData(callback) {
         }
         addRows();
         addTotalRows();
+        $('.records').slideDown();
+
         if( callback ) {
             callback.call(this);
         }
@@ -408,7 +424,7 @@ function getUserData(callback) {
 }
 
 function readHash() {
-    if( location.hash ) rivalID = location.hash.substr(1);
+    if( location.hash ) username = location.hash.substr(1);
 }
 
 function getStat(callback) {
@@ -484,6 +500,8 @@ function getStat(callback) {
 
 
     $('.content-page.stats').append(tbl);
+
+    $('.stats').slideDown();
 
     if( callback ) {
         callback.call(this);

@@ -72,14 +72,18 @@ body {
 .basicinfo .info.jubility {
     position: relative;
 }
+.basicinfo .subinfo-jubility {
+    padding-right: 10px;
+    text-align: right;
+}
 .basicinfo .subinfo-jubilityimage {
     position: absolute;
     top: 0;
     right: 0;
 }
-.basicinfo .subinfo-jubility {
-    padding-right: 10px;
-    text-align: right;
+.basicinfo .subinfo-jubilityimage img {
+    width: 244px;
+    height: 244px;
 }
 
 .basicinfo .info.setting {
