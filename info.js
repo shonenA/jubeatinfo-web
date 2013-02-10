@@ -151,7 +151,7 @@ function bindHandler() {
     $('button[name=button-search]').click(function(event) {
         event.preventDefault();
         location.hash = $('.search-query').val();
-        initialize();
+        loadData();
     });
 
     $('button[name=button-refresh]').click(function(event) {
@@ -509,7 +509,7 @@ function getStat(callback) {
     var tr = $('<tr>');
     tr.append($('<th>').text('계'));
     for( var i in rankArr ) {
-        tr.append($('<td>').text(total[rankArr[j]]));
+        tr.append($('<td>').text(total[rankArr[i]]));
     }
     tr.append($('<td>').text(total['NP']));
     tr.append($('<td>').text(addCommas(parseInt(total['scoresum']/(total['count']?total['count']:1)))));
@@ -531,11 +531,15 @@ function clearContents() {
     MusicEntries.clear();
 }
 
-function initialize() {
+function loadData() {
     clearContents();
-    bindHandler();
     readHash();
     getData();
+}
+
+function initialize() {
+    bindHandler();
+    loadData();
 }
 
 
