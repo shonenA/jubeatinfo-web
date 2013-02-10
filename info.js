@@ -5,7 +5,7 @@ function notifyError(message) {
 }
 
 function notifySuccess(message) {
-    notify('error', message);
+    notify('success', message);
 }
 
 function notify(type, message) {
@@ -155,6 +155,7 @@ function bindHandler() {
     });
 
     $('button[name=button-refresh]').click(function(event) {
+        event.preventDefault();
         $.ajax({
             type: 'PUT',
             url: 'api.php',
