@@ -1,5 +1,17 @@
 var username = 'shonen.a';
 
+function notifyError(message) {
+    notify('error', message);
+}
+
+function notifySuccess(message) {
+    notify('error', message);
+}
+
+function notify(type, message) {
+    $('.alert').show().addClass('alert-' + type).find('.message').text(message);
+}
+
 var MusicEntry = function(name, artist) {
     return {
         name: name,
@@ -135,7 +147,6 @@ var Sorter = (function() {
 function bindHandler() {
     $('button[name=button-search]').click(function(event) {
         event.preventDefault();
-        $('.basicinfo,.stats,.records').hide();
         location.hash = $('.search-query').val();
         initialize();
     });
@@ -147,10 +158,10 @@ function bindHandler() {
             data: {random: Math.random(), name: username},
             success: function(data) {
                 if( !data ) {
-                    alert('갱신 요청 실패');
+                    notifyError('갱신 요청 실패');
                     return;
                 }
-                alert('갱신 요청이 되었습니다');
+                notifySuccess('갱신 요청이 되었습니다');
             },
             dataType: 'text'
         });
@@ -406,14 +417,14 @@ function setBasicInformation(data) {
 function getUserData(callback) {
     $.get('api.php', {name: username, r: Math.random()}, function(res) {
         if( !res.result ) {
-            alert(res.error);
+            notifyError(res.error);
             return;
         }
 
         var data = res.data;
 
         setBasicInformation(data);
-        $('.basicinfo').slideDown();
+        $('.basicinfo').show();
 
         clearRows();
         for( var i in data.history ) {
@@ -421,7 +432,7 @@ function getUserData(callback) {
         }
         addRows();
         addTotalRows();
-        $('.records').slideDown();
+        $('.records').show();
 
         if( callback ) {
             callback.call(this);
@@ -510,14 +521,20 @@ function getStat(callback) {
 
     $('.content-page.stats').append(tbl);
 
-    $('.stats').slideDown();
+    $('.stats').show();
 
     if( callback ) {
         callback.call(this);
     }
 }
 
+function clearContents() {
+    $('.alert').hide();
+    $('.basicinfo,.stats,.records').hide();
+}
+
 function initialize() {
+    clearContents();
     bindHandler();
     readHash();
     getData();
