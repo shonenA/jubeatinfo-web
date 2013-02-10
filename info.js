@@ -75,6 +75,9 @@ var MusicEntries = (function() {
             for( var i in sorted ) {
                 func.call(this, this.get(sorted[i].name));
             }
+        },
+        clear: function() {
+            idx = {};
         }
     }
 })();
@@ -531,6 +534,7 @@ function getStat(callback) {
 function clearContents() {
     $('.alert').hide();
     $('.basicinfo,.stats,.records').hide();
+    MusicEntries.clear();
 }
 
 function initialize() {
