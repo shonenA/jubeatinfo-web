@@ -291,19 +291,28 @@ function addRow(entry) {
 }
 
 function addTotalRows() {
+    function getAvgScore(difficulty) {
+        var scores = $('.' + difficulty + ' .score');
+        var total = scores.get()
+            .map(function(e) { return parseInt($(e).text().replace(/,/g, '')); })
+            .reduce(function(a,b) { return a + b; });
+
+        return parseInt(total / scores.length)
+    }
+
     var entry = {
         BASIC: {
-            score: parseInt($('.bsc .score').get().map(function(e){return parseInt($(e).text().replace(/,/g, ''))}).reduce(function(a,b){return a+b}) / $('.bsc .score').length),
+            score: getAvgScore('bsc'),
             date: $('.entry-info .bsc').get().map(function(e){return $(e).text()}).sort(function(a,b){return a>b?-1:1})[0],
             level: 'BSC',
         },
         ADVANCED: {
-            score: parseInt($('.adv .score').get().map(function(e) { return parseInt($(e).text().replace(/,/g, ''))}).reduce(function(a,b){return a+b}) / $('.adv .score').length),
+            score: getAvgScore('adv'),
             date: $('.entry-info .adv').get().map(function(e){return $(e).text()}).sort(function(a,b){return a>b?-1:1})[0],
             level: 'ADV',
         },
         EXTREME: {
-            score: parseInt($('.ext .score').get().map(function(e) { return parseInt($(e).text().replace(/,/g, ''))}).reduce(function(a,b){return a+b}) / $('.ext .score').length),
+            score: getAvgScore('ext'),
             date: $('.entry-info .ext').get().map(function(e){return $(e).text()}).sort(function(a,b){return a>b?-1:1})[0],
             level: 'EXT',
         }
@@ -472,35 +481,25 @@ function getStat(callback) {
         if( !isNaN(score) ) { data[lv].count++; total.count++; }
     });
 
+    var rankArr = ['EXC', 'SSS', 'SS', 'S', 'A', 'B', 'C', 'D', 'E'];
+
     var tbl = $('<table class="table">');
-    var head = $('<tr>')
-        .append($('<th>').text('레벨'))
-        .append($('<th>').text('EXC'))
-        .append($('<th>').text('SSS'))
-        .append($('<th>').text('SS'))
-        .append($('<th>').text('S'))
-        .append($('<th>').text('A'))
-        .append($('<th>').text('B'))
-        .append($('<th>').text('C'))
-        .append($('<th>').text('D'))
-        .append($('<th>').text('E'))
-        .append($('<th>').text('NP'))
-        .append($('<th>').text('평균'));
+    var head = $('<tr>');
+    head.append($('<th>').text('레벨'));
+    for( var i in rankArr ) {
+        head.append($('<th>').text(rankArr[i]))
+    }
+    head.append($('<th>').text('NP'))
+    head.append($('<th>').text('평균'));
     tbl.append(head);
 
     for( var i in data ) {
         if( parseInt(i) != i ) continue;
         var tr = $('<tr>');
         tr.append($('<th>').text('Level ' + i));
-        tr.append($('<td>').text(data[i]['EXC']));
-        tr.append($('<td>').text(data[i]['SSS']));
-        tr.append($('<td>').text(data[i]['SS']));
-        tr.append($('<td>').text(data[i]['S']));
-        tr.append($('<td>').text(data[i]['A']));
-        tr.append($('<td>').text(data[i]['B']));
-        tr.append($('<td>').text(data[i]['C']));
-        tr.append($('<td>').text(data[i]['D']));
-        tr.append($('<td>').text(data[i]['E']));
+        for( var j in rankArr ) {
+            tr.append($('<td>').text(data[i][rankArr[j]]));
+        }
         tr.append($('<td>').text(data[i]['NP']));
         tr.append($('<td>').text(addCommas(parseInt(data[i]['scoresum']/(data[i]['count']?data[i]['count']:1)))));
         tbl.append(tr);
@@ -508,15 +507,9 @@ function getStat(callback) {
 
     var tr = $('<tr>');
     tr.append($('<th>').text('계'));
-    tr.append($('<td>').text(total['EXC']));
-    tr.append($('<td>').text(total['SSS']));
-    tr.append($('<td>').text(total['SS']));
-    tr.append($('<td>').text(total['S']));
-    tr.append($('<td>').text(total['A']));
-    tr.append($('<td>').text(total['B']));
-    tr.append($('<td>').text(total['C']));
-    tr.append($('<td>').text(total['D']));
-    tr.append($('<td>').text(total['E']));
+    for( var i in rankArr ) {
+        tr.append($('<td>').text(total[rankArr[j]]));
+    }
     tr.append($('<td>').text(total['NP']));
     tr.append($('<td>').text(addCommas(parseInt(total['scoresum']/(total['count']?total['count']:1)))));
     tbl.append(tr);
