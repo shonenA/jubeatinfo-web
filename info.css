@@ -3,7 +3,7 @@
 @import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
 
 * {
-    font-family: 'Nanum Gothic';
+    font-family: 'Nanum Gothic', 'Dotum', 'Apple Gothic';
 }
 
 body {
@@ -17,7 +17,7 @@ body {
 .page-header button,
 .page-header input
 {
-    vertical-align: middle;
+    vertical-align: middle !important;
 }
 
 .content-page {
@@ -100,6 +100,10 @@ body {
 {
     margin-left: 5px;
     content: '회';
+}
+
+.basicinfo .link-eagate {
+    margin-left: 5px;
 }
 
 

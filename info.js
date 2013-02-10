@@ -133,8 +133,11 @@ var Sorter = (function() {
 })();
 
 function bindHandler() {
-    $('.search-query').click(function(event) {
+    $('button[name=button-search]').click(function(event) {
         event.preventDefault();
+        $('.basicinfo,.stats,.records').hide();
+        location.hash = $('.search-query').val();
+        initialize();
     });
 
     $('button[name=button-refresh]').click(function(event) {
@@ -377,7 +380,7 @@ function setBasicInformation(data) {
     $('.subinfo-name').text(data.user_name);
 
     $('.subinfo-jubility').text(data.jubility).attr('description', jubilityTbl[parseInt(data.jubility)]);
-    $('.subinfo-jubilityimage').append($('<img>').attr('src', data.jubility_image));
+    $('.subinfo-jubilityimage').text('').append($('<img>').attr('src', data.jubility_image));
 
     $('.subinfo-rivalid').text(data.rival_id).attr('description', '라이벌 아이디');
     $('.subinfo-activegroup').text(data.active_group).attr('description', '소속 그룹');
@@ -395,11 +398,9 @@ function setBasicInformation(data) {
     $('.subinfo-fullcombo').text(addCommas(data.count_fullcombo)).attr('description', '풀콤보 횟수');
     $('.subinfo-excellent').text(addCommas(data.count_excellent)).attr('description', '엑설런트 횟수');
 
-    $('<a>').text('e-AMUSEMENT GATE로')
+    $('.link-eagate').text('e-AMUSEMENT GATE로')
             .attr('href', 'http://p.eagate.573.jp/game/jubeat/saucer/p/playdata/index_other.html?rival_id=' + data.rival_id)
-            .attr('target', '_eamusementgate')
-            .css('margin-left', '5px')
-            .appendTo('.basicinfo .info-right');
+            .attr('target', '_eamusementgate');
 }
 
 function getUserData(callback) {
@@ -429,7 +430,10 @@ function getUserData(callback) {
 }
 
 function readHash() {
-    if( location.hash ) username = location.hash.substr(1);
+    if( location.hash ) {
+        username = location.hash.substr(1);
+        $('.search-query').val(username);
+    }
 }
 
 function getStat(callback) {
