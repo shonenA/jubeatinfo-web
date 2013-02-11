@@ -139,7 +139,7 @@ var Sorter = (function() {
                     da = da[current.obj[i]];
                     db = db[current.obj[i]];
                 }
-                return (da < db ? -1 : 1) * (asc ? 1 : -1);
+                return (da == db ? (a.name < b.name ? -1 : 1) : (da < db ? -1 : 1)) * (asc ? 1 : -1);
             }
         }
     }
