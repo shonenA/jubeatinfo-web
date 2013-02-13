@@ -106,6 +106,7 @@ class JubeatinfoModel extends DefaultModel {
                 if( empty($musicList[$music->music]) ) continue;
                 $music->artist = $musicList[$music->music][1];
                 $music->bpm = $musicList[$music->music][2];
+                $music->score = $music->score=='-'?0:$music->score;
                 switch($music->difficulty) {
                     case "BASIC":
                         $music->level = $musicList[$music->music][3];
