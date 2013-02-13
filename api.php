@@ -78,6 +78,55 @@ class JubeatinfoModel extends DefaultModel {
 
         $ret['result'] = 1;
         $ret['data'] = json_decode(file_get_contents($latest));
+
+        do {
+            if( !$data['music_detail'] ) {
+                break;
+            }
+
+            $rawMusicList = 'data/list.txt';
+            $rawMusicList = file_get_contents($rawMusicList);
+            if( empty($rawMusicList) ) {
+                break;
+            }
+
+            $rawMusicList = explode("\n", $rawMusicList);
+            if( empty($rawMusicList) ) {
+                break;
+            }
+
+            $musicList = array();
+            foreach( $rawMusicList as $music ) {
+                $elem = explode("\t", $music);
+                $musicList[$elem[0]] = $elem;
+            }
+
+            $history = array();
+            foreach( $ret['data']->history as $music ) {
+                if( empty($musicList[$music->music]) ) continue;
+                $music->artist = $musicList[$music->music][1];
+                $music->bpm = $musicList[$music->music][2];
+                switch($music->difficulty) {
+                    case "BASIC":
+                        $music->level = $musicList[$music->music][3];
+                        $music->notecount = $musicList[$music->music][6];
+                        break;
+                    case "ADVANCED":
+                        $music->level = $musicList[$music->music][4];
+                        $music->notecount = $musicList[$music->music][7];
+                        break;
+                    case "EXTREME":
+                        $music->level = $musicList[$music->music][5];
+                        $music->notecount = $musicList[$music->music][8];
+                        break;
+                    default:
+                        break;
+                }
+                array_push($history, $music);
+            }
+            $ret['data']->history = $history;
+        } while(false);
+
         return $ret;
 	}
 
