@@ -3,8 +3,8 @@
 require_once "_config.php";
 
 interface Model {
-	function get($data);
-	function set($data);
+    function get($data);
+    function set($data);
     function del($data);
 }
 
@@ -31,7 +31,7 @@ class JubeatinfoModel extends DefaultModel {
         return $rivalId;
     }
 
-	public function get($data) {
+    public function get($data) {
         $ret = array('result' => 0);
         $username = strtolower($data['name']);
 
@@ -129,9 +129,9 @@ class JubeatinfoModel extends DefaultModel {
         } while(false);
 
         return $ret;
-	}
+    }
 
-	public function set($data) {
+    public function set($data) {
         $ret = 0;
         $username = strtolower($data['name']);
 
@@ -163,43 +163,43 @@ class JubeatinfoModel extends DefaultModel {
         $ret = (false !== file_put_contents($queuePath, implode("\n", $queue)));
 
         return $ret ? 1 : 0;
-	}
+    }
 
-	public function del($data) {
-	}
+    public function del($data) {
+    }
 }
 
 interface Handler {
-	function setModel($model);
-	function handle($request);
+    function setModel($model);
+    function handle($request);
 }
 
 abstract class DefaultHandler implements Handler {
-	protected $model;
+    protected $model;
 
-	public function setModel($model) {
-		$this->model = $model;
-	}
+    public function setModel($model) {
+        $this->model = $model;
+    }
 
-	abstract public function handle($request);
+    abstract public function handle($request);
 }
 
 class GetHandler extends DefaultHandler {
-	public function handle($request) {
+    public function handle($request) {
         header('Content-Type: application/json');
         return json_encode($this->model->get($request));
-	}
+    }
 }
 
 class PutHandler extends DefaultHandler {
-	public function handle($request) {
+    public function handle($request) {
         return $this->model->set($request);
-	}
+    }
 }
 
 function handleError($errorCode) {
-	echo $errorCode;
-	return $errorCode;
+    echo $errorCode;
+    return $errorCode;
 }
 
 function handleRequest() {
@@ -207,41 +207,41 @@ function handleRequest() {
         return handleError("Not in apache");
     }
 
-	$method = strtolower($_SERVER['REQUEST_METHOD']);
+    $method = strtolower($_SERVER['REQUEST_METHOD']);
 
-	$handler = null;
-	$request = null;
-	switch($method) {
-		case "put":
-			if( !class_exists('PutHandler') ) break;
-			$handler = new PutHandler();
-			parse_str(file_get_contents("php://input"), $request);
-			break;
-		case "delete":
-			if( !class_exists('DeleteHandler') ) break;
-			$handler = new DeleteHandler();
-			parse_str(file_get_contents("php://input"), $request);
-			break;
-		case "post":
-			if( !class_exists('PostHandler') ) break;
-			$handler = new PostHandler();
-			$request = $_POST;
-			break;
-		case "get":
-			if( !class_exists('GetHandler') ) break;
-			$handler = new GetHandler();
-			$request = $_GET;
-			break;
-		default:
-			break;
-	}
+    $handler = null;
+    $request = null;
+    switch($method) {
+        case "put":
+            if( !class_exists('PutHandler') ) break;
+            $handler = new PutHandler();
+            parse_str(file_get_contents("php://input"), $request);
+            break;
+        case "delete":
+            if( !class_exists('DeleteHandler') ) break;
+            $handler = new DeleteHandler();
+            parse_str(file_get_contents("php://input"), $request);
+            break;
+        case "post":
+            if( !class_exists('PostHandler') ) break;
+            $handler = new PostHandler();
+            $request = $_POST;
+            break;
+        case "get":
+            if( !class_exists('GetHandler') ) break;
+            $handler = new GetHandler();
+            $request = $_GET;
+            break;
+        default:
+            break;
+    }
 
-	if( !$handler ) return handleError(404);
+    if( !$handler ) return handleError(404);
 
-	$handler->setModel(new JubeatinfoModel());
-	$result = $handler->handle($request);
+    $handler->setModel(new JubeatinfoModel());
+    $result = $handler->handle($request);
 
-	return $result;
+    return $result;
 }
 
 echo handleRequest();
