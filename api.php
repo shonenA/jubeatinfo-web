@@ -78,6 +78,7 @@ class JubeatinfoModel extends DefaultModel {
 
         $ret['result'] = 1;
         $ret['data'] = json_decode(file_get_contents($latest));
+        $ret['data']->refresh = date('Y-m-d H:i:s', filemtime($latest));
 
         do {
             if( !$data['music_detail'] ) {

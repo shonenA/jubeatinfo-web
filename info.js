@@ -400,6 +400,8 @@ function setBasicInformation(data) {
         'jellyfish', 'hummingbird', 'kaleidoscope', 'prism', 'prism'
     ];
 
+    $('.basicinfo .refresh').text('(최근 갱신: ' + data.refresh + ')');
+
     $('.subinfo-title').text(data.title);
     $('.subinfo-name').text(data.user_name);
 
