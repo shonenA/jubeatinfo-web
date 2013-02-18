@@ -468,7 +468,7 @@ function getStat(callback) {
     var data = {};
     var total = {scoresum:0,count:0};
 
-    $('.fc,.nfc').each(function() {
+    $('.entry:not(.total)').children('.fc,.nfc').each(function() {
         var lv = $(this).find('.level').text();
         var rating = $(this).find('img').attr('data');
         if( 'undefined' == typeof rating ) rating = 'NP';
