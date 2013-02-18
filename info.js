@@ -85,6 +85,7 @@ var MusicEntries = (function() {
 var Sorter = (function() {
     var methods = [
         {domain:'name', method:'name', obj:['name']},
+        {domain:'name', method:'artist', obj:['artist']},
         {domain:'bsc', method:'level', obj:['BASIC', 'level']},
         {domain:'bsc', method:'score', obj:['BASIC', 'score'], desc: true},
         {domain:'bsc', method:'time', obj:['BASIC', 'time'], desc: true},
@@ -496,7 +497,7 @@ function getStat(callback) {
     head.append($('<th>').text('평균'));
     tbl.append(head);
 
-    for( var i in data ) {
+    for( var i = 1; i <= 10; i++ ) {
         if( parseInt(i) != i ) continue;
         var tr = $('<tr>');
         tr.append($('<th>').text('Level ' + i));
