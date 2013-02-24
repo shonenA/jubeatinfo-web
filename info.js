@@ -264,6 +264,21 @@ function formatMusicInfo(entry) {
     return bpmlabel + bpm + nclabel + bscnc + advnc + extnc;
 }
 
+function getGreatCount(entry) {
+    var great = {};
+    var difficulties = ['BASIC', 'ADVANCED', 'EXTREME'];
+    difficulties.forEach(function(e, i) {
+        var et = entry[e];
+        if( et.note && et.score ) {
+            great[e] = (1000000-et.score)/((900000/et.note)*0.3);
+            great[e] = great[e].toFixed(2);
+        } else {
+            great[e] = '';
+        }
+    });
+    return great;
+}
+
 function addRow(entry) {
     var tr = $('<tr class="entry">');
     var musicName = $('<td class="music">').html(formatMusicName(entry));
@@ -281,12 +296,17 @@ function addRow(entry) {
         .addClass((entry.EXTREME.fc)?'fc':'nfc');
     tr.append(musicName).append(bsc).append(adv).append(ext);
 
+    var greatCount = getGreatCount(entry);
+    
     var trinfo = $('<tr class="entry-info">');
     musicName = $('<td class="music">')
         .html(formatMusicInfo(entry));
-    bsc = $('<td class="bsc">').html(entry.BASIC.time.split(' ')[0]);
-    adv = $('<td class="adv">').html(entry.ADVANCED.time.split(' ')[0]);
-    ext = $('<td class="ext">').html(entry.EXTREME.time.split(' ')[0]);
+    bsc = $('<td class="bsc">')
+        .html('<span class="pull-left">' + greatCount.BASIC + '</span>' + entry.BASIC.time.split(' ')[0]);
+    adv = $('<td class="adv">')
+        .html('<span class="pull-left">' + greatCount.ADVANCED + '</span>' + entry.ADVANCED.time.split(' ')[0]);
+    ext = $('<td class="ext">')
+        .html('<span class="pull-left">' + greatCount.EXTREME + '</span>' + entry.EXTREME.time.split(' ')[0]);
     trinfo.append(musicName).append(bsc).append(adv).append(ext);
 
     $('.records .table').append(tr).append(trinfo);

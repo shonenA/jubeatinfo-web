@@ -184,6 +184,7 @@ body {
     height: 12px;
     margin: 0;
     padding: 0;
+    padding-left: 8px;
     padding-right: 8px;
     border-top: 1px solid #eee;
     font-size: 10px;
