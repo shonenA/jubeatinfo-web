@@ -12,6 +12,26 @@ function notify(type, message) {
     $('.alert').show().addClass('alert-' + type).find('.message').text(message);
 }
 
+function stableSort(array, compare) {
+    function merge(a1, a2) {
+        var l1 = a1.length, l2 = a2.length, l = l1 + l2, r = new Array(l);
+        for (var i1 = 0, i2 = 0, i = 0; i < l;) {
+            if (i1 === l1)
+                r[i++] = a2[i2++];
+            else if (i2 === l2 || compare(a1[i1], a2[i2]) <= 0)
+                r[i++] = a1[i1++];
+            else
+                r[i++] = a2[i2++];
+        }
+        return r;
+    }
+    function sort(a) {
+        var l = a.length, m = Math.ceil(l / 2);
+        return (l <= 1) ? a : merge(sort(a.slice(0, m)), sort(a.slice(m)));
+    }
+    return sort(array);
+}
+
 var MusicEntry = function(name, artist) {
     return {
         name: name,
@@ -26,6 +46,7 @@ var MusicEntry = function(name, artist) {
 
 var MusicEntries = (function() {
     var idx = {};
+    var sorted = [];
 
     return {
         setEntry: function(name, artist, bpm, levels, notes, image) {
@@ -63,13 +84,14 @@ var MusicEntries = (function() {
             }
         },
         forEach: function(func, order) {
-            var sorted = [];
-            for( var i in idx ) {
-                sorted.push(idx[i]);
+            if( sorted.length == 0 ) {
+                for( var i in idx ) {
+                    sorted.push(idx[i]);
+                }
             }
 
             if( order ) {
-                sorted.sort(order);
+                sorted = stableSort(sorted, order);
             }
 
             for( var i in sorted ) {
@@ -140,7 +162,7 @@ var Sorter = (function() {
                     da = da[current.obj[i]];
                     db = db[current.obj[i]];
                 }
-                return (da == db ? (a.name < b.name ? -1 : 1) : (da < db ? -1 : 1)) * (asc ? 1 : -1);
+                return (da == db ? 0 : (da < db ? -1 : 1) * (asc ? 1 : -1));
             }
         }
     }
