@@ -66,7 +66,7 @@ var MusicEntries = (function() {
             if( 'undefined' == typeof(idx[key]) ) {
                 idx[key] = new MusicEntry(name);
             }
-            score = parseInt(score.trim());
+            score = parseInt(score);
             if( idx[key][difficulty].score < score ) {
                 idx[key][difficulty].score = score;
                 idx[key][difficulty].fc = fc;
