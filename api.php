@@ -80,6 +80,26 @@ class JubeatinfoModel extends DefaultModel {
         $ret['data'] = json_decode(file_get_contents($latest));
         $ret['data']->refresh = date('Y-m-d H:i:s', filemtime($latest));
 
+        $query = <<<SQL
+        SELECT music, difficulty, MAX(score) AS score,
+            MAX(fc) AS fc, MAX(date) AS date
+        FROM summary
+        WHERE rivalid = {$rivalId[$username]}
+        GROUP BY rivalid, music, difficulty
+SQL;
+        $ret['data']->history = array();
+        $db = new SQLite3(JUBEATINFO_DATA . '/jubeatinfo.sqlite3');
+        $result = $db->query($query);
+        while($row = $result->fetchArray(SQLITE3_ASSOC)) {
+            $obj = new stdClass();
+            $obj->music = $row['music'];
+            $obj->difficulty = $row['difficulty'];
+            $obj->score = $row['score'];
+            $obj->fc = $row['fc'];
+            $obj->date = $row['date'];
+            array_push($ret['data']->history, $obj);
+        }
+
         do {
             if( !$data['music_detail'] ) {
                 break;
