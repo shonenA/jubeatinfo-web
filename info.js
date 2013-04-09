@@ -100,6 +100,7 @@ var MusicEntries = (function() {
         },
         clear: function() {
             idx = {};
+            sorted = [];
         }
     }
 })();
@@ -234,6 +235,7 @@ function addCommas(nStr)
 
 function formatScore(entry, rank) {
     var score = entry.score;
+    if( isNaN(score) ) score = entry.score = 0;
     if( typeof(rank) === 'undefined' ) {
         rank = score;
     }
@@ -324,11 +326,11 @@ function addRow(entry) {
     musicName = $('<td class="music">')
         .html(formatMusicInfo(entry));
     bsc = $('<td class="bsc">')
-        .html('<span class="pull-left">' + greatCount.BASIC + '</span>' + entry.BASIC.time.split(' ')[0]);
+        .html('<span class="pull-left">' + greatCount.BASIC + '</span>' + '<span class="upd-date">' + entry.BASIC.time.split(' ')[0] + '</span>');
     adv = $('<td class="adv">')
-        .html('<span class="pull-left">' + greatCount.ADVANCED + '</span>' + entry.ADVANCED.time.split(' ')[0]);
+        .html('<span class="pull-left">' + greatCount.ADVANCED + '</span>' + '<span class="upd-date">'  + entry.ADVANCED.time.split(' ')[0] + '</span>');
     ext = $('<td class="ext">')
-        .html('<span class="pull-left">' + greatCount.EXTREME + '</span>' + entry.EXTREME.time.split(' ')[0]);
+        .html('<span class="pull-left">' + greatCount.EXTREME + '</span>' + '<span class="upd-date">'  + entry.EXTREME.time.split(' ')[0] + '</span>');
     trinfo.append(musicName).append(bsc).append(adv).append(ext);
 
     $('.records .table').append(tr).append(trinfo);
@@ -339,7 +341,7 @@ function addTotalRows() {
         var scores = $('.' + difficulty + ' .score');
         var total = scores.get()
             .map(function(e) { return parseInt($(e).text().replace(/,/g, '')); })
-            .reduce(function(a,b) { return a + b; });
+            .reduce(function(a,b) { return a + b; }, 0);
 
         return parseInt(total / scores.length)
     }
@@ -347,17 +349,17 @@ function addTotalRows() {
     var entry = {
         BASIC: {
             score: getAvgScore('bsc'),
-            date: $('.entry-info .bsc').get().map(function(e){return $(e).text()}).sort(function(a,b){return a>b?-1:1})[0],
+            date: $('.entry-info .bsc .upd-date').get().map(function(e){return $(e).text()}).sort(function(a,b){return a>b?-1:1})[0],
             level: 'BSC',
         },
         ADVANCED: {
             score: getAvgScore('adv'),
-            date: $('.entry-info .adv').get().map(function(e){return $(e).text()}).sort(function(a,b){return a>b?-1:1})[0],
+            date: $('.entry-info .adv .upd-date').get().map(function(e){return $(e).text()}).sort(function(a,b){return a>b?-1:1})[0],
             level: 'ADV',
         },
         EXTREME: {
             score: getAvgScore('ext'),
-            date: $('.entry-info .ext').get().map(function(e){return $(e).text()}).sort(function(a,b){return a>b?-1:1})[0],
+            date: $('.entry-info .ext .upd-date').get().map(function(e){return $(e).text()}).sort(function(a,b){return a>b?-1:1})[0],
             level: 'EXT',
         }
     };
@@ -505,6 +507,19 @@ function readHash() {
     }
 }
 
+function filter(level, rank) {
+    $('.entry:not(.total),.entry-info:not(.total)').hide();
+
+    $('.entry:not(.total) td > .rank > img[data='+rank+']')
+        .parent().parent()
+        .filter(function(i, e) {
+            if($(e).find('.level').text() == level) {
+                console.log(e);
+                return e;
+            }
+        }).parent().show().next().show();
+}
+
 function getStat(callback) {
     $('.content-page.stats table').remove();
 
@@ -544,7 +559,12 @@ function getStat(callback) {
         var tr = $('<tr>');
         tr.append($('<th>').text('Level ' + i));
         for( var j in rankArr ) {
-            tr.append($('<td>').text(data[i][rankArr[j]]));
+            tr.append(
+                $('<td>').text(data[i][rankArr[j]])
+                    .click((function(level, rank) { return function() {
+                        filter(level, rank);
+                    }})(i, rankArr[j]))
+            );
         }
         tr.append($('<td>').text(data[i]['NP']));
         tr.append($('<td>').text(addCommas(parseInt(data[i]['scoresum']/(data[i]['count']?data[i]['count']:1)))));
